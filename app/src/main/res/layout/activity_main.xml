@@ -39,6 +39,8 @@
         </FrameLayout>
 
         <fragment
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/supportMap"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"

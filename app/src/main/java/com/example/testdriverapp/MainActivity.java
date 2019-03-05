@@ -1,5 +1,6 @@
 package com.example.testdriverapp;
 
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.Nullable;
@@ -49,8 +50,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     private GoogleMap googleMap;
+
     // The main entry point for interacting with the fused location provider.
     private FusedLocationProviderClient locationProviderClient;
+
     //  data object that contains quality of service parameters for requests to the
     // FusedLocationProviderApi
     private LocationRequest locationRequest;
@@ -58,10 +61,22 @@ public class MainActivity extends AppCompatActivity {
     private boolean driverOnlineFlag = false;
     private @Nullable Marker currentLocationMarker;
     private GoogleMapHelper googleMapHelper = new GoogleMapHelper();
+
     private FireBaseHelper fireBaseHelper = new FireBaseHelper(DRIVER_ID);
+
     private MarkerAnimationHelper markerAnimationHelper = new MarkerAnimationHelper();
     private UiHelper uiHelper;
     private Marker currentPositionMarker;
+
+    private static final int VERIFICATION_REQUEST_CODE = 1010;
+
+    private SharedPreferences preferences;
+
+    SharedPreferences.Editor prefEditor;
+
+    private TextView driverStatusTextView;
+
+    SwitchCompat switchCompat;
 
 
 
@@ -99,6 +114,12 @@ public class MainActivity extends AppCompatActivity {
 
         locationRequest = uiHelper.getLocationRequest();
 
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+        preferences = getPreferences(MODE_PRIVATE);
+
+        prefEditor = preferences.edit();
+
         if (!uiHelper.isPlayServicesAvailable(this))
         {
             Toast.makeText(this, "Play Services is Not Installed!", Toast.LENGTH_SHORT).show();
@@ -110,15 +131,34 @@ public class MainActivity extends AppCompatActivity {
             requestLocationUpdates();
         }
 
-        final TextView driverStatusTextView = findViewById(R.id.driverStatusTextView);
+        driverStatusTextView = findViewById(R.id.driverStatusTextView);
 
-        SwitchCompat switchCompat = findViewById(R.id.driverStatusSwitch);
+        switchCompat = findViewById(R.id.driverStatusSwitch);
+
         switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                driverOnlineFlag = isChecked;
-                if (driverOnlineFlag)
-                    driverStatusTextView.setText("Online");
+
+                // check if the switch is on
+                if (isChecked)
+                {
+                    boolean isDriver = preferences.getBoolean("is_driver", false);
+                    // check if the user is a driver
+                    if (isDriver)
+                    {
+                        // if user is verified as driver, make them online
+                        driverOnlineFlag = true;
+
+                        // set UI status to online
+                        driverStatusTextView.setText("Online");
+                    }
+                    // if we don't know if the user is a driver, then start QR scan activity to check
+                    else {
+                        switchCompat.setChecked(false);
+                        startActivityForResult(ScanQrCodeActivity.getScanQrCodeActivity(getApplicationContext()), VERIFICATION_REQUEST_CODE);
+                    }
+
+                }
                 else
                 {
                     driverStatusTextView.setText("Offline");
@@ -126,6 +166,42 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        boolean isDriverResult = false;
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == VERIFICATION_REQUEST_CODE && (data != null))
+        {
+            isDriverResult = data.getExtras().getBoolean("isDriver");
+            prefEditor.putBoolean("is_driver", isDriverResult);
+            prefEditor.commit();
+        }
+
+        if (isDriverResult)
+        {
+            Toast.makeText(this, "Driver Verified", Toast.LENGTH_LONG).show();
+
+            // if user is verified as driver, make them online
+            driverOnlineFlag = true;
+
+            // set UI status to online
+            driverStatusTextView.setText("Online");
+
+            switchCompat.setChecked(true);
+        }
+        else
+            Toast.makeText(this, "Driver not Verified", Toast.LENGTH_LONG).show();
     }
 
     @SuppressLint("MissingPermission")
@@ -141,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (uiHelper.isLocationProviderEnabled())
         {
+            //FIXME
             uiHelper.showPositiveDialogWithListener(this
                     , "Need Location"
                     , "We need access to your current Location"
