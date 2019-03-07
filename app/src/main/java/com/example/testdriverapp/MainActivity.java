@@ -36,9 +36,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
-import com.google.android.gms.maps.GoogleMap;
-
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
-    private static final String DRIVER_ID = UUID.randomUUID().toString();   // Id must be unique for every driver.
+    public static String DRIVER_ID;   // Id must be unique for every driver.
 
 
     private GoogleMap googleMap;
@@ -62,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private @Nullable Marker currentLocationMarker;
     private GoogleMapHelper googleMapHelper = new GoogleMapHelper();
 
-    private FireBaseHelper fireBaseHelper = new FireBaseHelper(DRIVER_ID);
+    private FireBaseHelper fireBaseHelper;
 
     private MarkerAnimationHelper markerAnimationHelper = new MarkerAnimationHelper();
     private UiHelper uiHelper;
@@ -78,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
 
     SwitchCompat switchCompat;
 
+    boolean isDriver;
+
 
 
     private LocationCallback locationCallback = new LocationCallback() {
@@ -90,8 +89,10 @@ public class MainActivity extends AppCompatActivity {
                 locationFlag = true;
                 animateCamera(location);
             }
-            if (driverOnlineFlag)
+            if (driverOnlineFlag) {
                 fireBaseHelper.updateDriver(new Driver(location.getLatitude(), location.getLongitude(), DRIVER_ID));
+                Log.e("Updated Driver: ", "MainActivity");
+            }
             showOrAnimateMarker(location);
         }
     };
@@ -110,8 +111,6 @@ public class MainActivity extends AppCompatActivity {
 
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
         locationRequest = uiHelper.getLocationRequest();
 
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
@@ -119,6 +118,13 @@ public class MainActivity extends AppCompatActivity {
         preferences = getPreferences(MODE_PRIVATE);
 
         prefEditor = preferences.edit();
+
+        if (DRIVER_ID == null){
+            // Give driver their unique id if they don't have one already
+            setDriverId();
+        }
+
+        fireBaseHelper = new FireBaseHelper(DRIVER_ID);
 
         if (!uiHelper.isPlayServicesAvailable(this))
         {
@@ -139,10 +145,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
+                driverOnlineFlag = isChecked;
+
                 // check if the switch is on
                 if (isChecked)
                 {
-                    boolean isDriver = preferences.getBoolean("is_driver", false);
+                    isDriver = preferences.getBoolean("is_driver", false);
                     // check if the user is a driver
                     if (isDriver)
                     {
@@ -162,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 else
                 {
                     driverStatusTextView.setText("Offline");
+                    driverOnlineFlag = false;
                     fireBaseHelper.deleteDriver();
                 }
             }
@@ -173,7 +182,37 @@ public class MainActivity extends AppCompatActivity {
     {
         super.onPause();
 
+        fireBaseHelper.deleteDriver();
 
+        if (driverOnlineFlag && isDriver)
+        {
+            Intent serviceIntent = new Intent(this, LocationService.class);
+            startService(serviceIntent);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        driverOnlineFlag = false;
+
+        fireBaseHelper.deleteDriver();
+
+        Intent serviceIntent = new Intent(this, LocationService.class);
+        stopService(serviceIntent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        fireBaseHelper.deleteDriver();
+
+        driverOnlineFlag = false;
+
+        Intent serviceIntent = new Intent(this, LocationService.class);
+        stopService(serviceIntent);
     }
 
     @Override
@@ -263,6 +302,23 @@ public class MainActivity extends AppCompatActivity {
             } else if (value == PackageManager.PERMISSION_GRANTED)
                 Toast.makeText(this, "Location Permission Granted!", Toast.LENGTH_SHORT).show();
                 requestLocationUpdates();
+        }
+    }
+
+    private void setDriverId(){
+
+        boolean driverIdExists = preferences.getBoolean("has_driver_id", false);
+
+        if (!driverIdExists) {
+            int randomNum = (int) (Math.random() * 10000 + 1);
+            DRIVER_ID = String.valueOf(randomNum);
+            prefEditor.putString("driver_id", DRIVER_ID);
+            prefEditor.commit();
+        }
+        else {
+            DRIVER_ID = preferences.getString("driver_id", "0000");
+            prefEditor.putBoolean("has_driver_id", true);
+            prefEditor.commit();
         }
     }
 
