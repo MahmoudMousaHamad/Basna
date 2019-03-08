@@ -67,32 +67,49 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fabStop;
     private BroadcastReceiver broadcastReceiver;
     private FireBaseHelper fireBaseHelper;
-    public static final String DRIVER_ID = "00000";
+    public static String DRIVER_ID;
+    public static boolean driverOnlineFlag;
+    private UiHelper uiHelper;
+    private boolean isDriver;
+    private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
+    private static final int VERIFICATION_REQUEST_CODE = 1010;
+    private @Nullable Marker currentLocationMarker;
+    private GoogleMapHelper googleMapHelper = new GoogleMapHelper();
+    private MarkerAnimationHelper markerAnimationHelper = new MarkerAnimationHelper();
+    private Marker currentPositionMarker;
+    private GoogleMap googleMap;
 
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        if(broadcastReceiver == null){
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    Driver tempDriver = new Driver(Double.parseDouble(intent.getExtras().get("latitude").toString())
-                            , Double.parseDouble(intent.getExtras().get("longitude").toString()), DRIVER_ID);
+        if(broadcastReceiver == null) broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Location location = new Location("");
 
+                location.setLatitude(Double.parseDouble(intent.getExtras().get("latitude").toString()));
+                location.setLongitude(Double.parseDouble(intent.getExtras().get("longitude").toString()));
+
+                Driver tempDriver = new Driver(location.getLatitude(), location.getLongitude(), DRIVER_ID);
+                if (driverOnlineFlag) {
                     fireBaseHelper.updateDriver(tempDriver);
-                    Log.e("Updated Driver: ", "MainActivity");
-
-                    Toast.makeText(context, intent.getExtras().get("longitude").toString()
-                            + " "
-                            + intent.getExtras().get("longitude").toString()
-                            , Toast.LENGTH_LONG).show();
+                    Log.e("Updated Driver ", "MainActivity");
                 }
-            };
-        }
+
+                animateCamera(location);
+                showOrAnimateMarker(location);
+            }
+        };
 
         registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
+
+        driverOnlineFlag = false;
+        fireBaseHelper.deleteDriver();
+        Intent intent = new Intent(getApplicationContext(), BackgroundService.class);
+        stopService(intent);
     }
 
     @Override
@@ -102,6 +119,20 @@ public class MainActivity extends AppCompatActivity {
         if (broadcastReceiver != null){
             unregisterReceiver(broadcastReceiver);
         }
+
+        fireBaseHelper.deleteDriver();
+        driverOnlineFlag = false;
+        Intent intent = new Intent(this, BackgroundService.class);
+        stopService(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (!driverOnlineFlag){
+            fireBaseHelper.deleteDriver();
+        }
     }
 
     @Override
@@ -109,37 +140,68 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fireBaseHelper = new FireBaseHelper(DRIVER_ID);
-
         fabStart = findViewById(R.id.fab_start);
         fabStop = findViewById(R.id.fab_stop);
 
-        if(!checkRuntimePermissions()){
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.supportMap);
+
+        mapFragment.getMapAsync(googleMap -> this.googleMap = googleMap);
+
+        preferences = getPreferences(MODE_PRIVATE);
+
+        editor = preferences.edit();
+
+        isDriver = preferences.getBoolean("is_driver", false);
+
+        if (!checkRuntimePermissions())
+        {
             enableButton();
         }
 
-        broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Driver tempDriver = new Driver(Double.parseDouble(intent.getExtras().get("latitude").toString())
-                        , Double.parseDouble(intent.getExtras().get("longitude").toString()), DRIVER_ID);
+        if (DRIVER_ID == null){
+            // Give driver their unique id if they don't have one already
+            setDriverId();
+        }
 
-                fireBaseHelper.updateDriver(tempDriver);
-                Log.e("Updated Driver: ", "MainActivity");
+        fireBaseHelper = new FireBaseHelper(DRIVER_ID);
 
-                Toast.makeText(context, intent.getExtras().get("longitude").toString()
-                                + " "
-                                + intent.getExtras().get("longitude").toString()
-                        , Toast.LENGTH_LONG).show();
-            }
-        };
+        uiHelper = new UiHelper(this);
 
+        if (!uiHelper.isPlayServicesAvailable(this))
+        {
+            Toast.makeText(this, "Play Services is Not Installed!", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+    }
+
+    private void setDriverId() {
+        boolean driverIdExists = preferences.getBoolean("has_driver_id", false);
+
+        if (!driverIdExists) {
+            int randomNum = (int) (Math.random() * 10000 + 1);
+            DRIVER_ID = String.valueOf(randomNum);
+            editor.putString("driver_id", DRIVER_ID);
+            editor.commit();
+        }
+        else {
+            DRIVER_ID = preferences.getString("driver_id", "0000");
+            editor.putBoolean("has_driver_id", true);
+            editor.commit();
+        }
     }
 
     private void enableButton() {
         fabStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!isDriver){
+                    startActivityForResult
+                            (ScanQrCodeActivity.getScanQrCodeActivity
+                                    (getApplicationContext()), VERIFICATION_REQUEST_CODE);
+                }
+
+                driverOnlineFlag = true;
                 Intent i = new Intent(getApplicationContext(), BackgroundService.class);
                 startService(i);
                 fabStop.setVisibility(View.VISIBLE);
@@ -154,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
                 stopService(i);
                 fabStart.setVisibility(View.VISIBLE);
                 fabStop.setVisibility(View.GONE);
+                fireBaseHelper.deleteDriver();
             }
         });
     }
@@ -180,6 +243,72 @@ public class MainActivity extends AppCompatActivity {
                 checkRuntimePermissions();
             }
         }
+    }
+
+    private void switchFabs(boolean isChecked){
+        if(isChecked){
+            // set start button visibility to gone
+            fabStart.setVisibility(View.GONE);
+
+            // set stop button visibility to visible
+            fabStop.setVisibility(View.VISIBLE);
+        } else{
+            // set start button visibility to gone
+            fabStart.setVisibility(View.VISIBLE);
+
+            // set stop button visibility to visible
+            fabStop.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        boolean isDriverResult = false;
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == VERIFICATION_REQUEST_CODE && (data != null))
+        {
+            isDriverResult = data.getExtras().getBoolean("isDriver");
+            editor.putBoolean("is_driver", isDriverResult);
+            editor.commit();
+        }
+
+        if (isDriverResult)
+        {
+            Toast.makeText(this, R.string.driver_verified, Toast.LENGTH_LONG).show();
+
+            // if user is verified as driver, make them online
+            driverOnlineFlag = true;
+
+            switchFabs(true);
+
+            enableButton();
+        }
+        else
+            Toast.makeText(this, "Driver not Verified", Toast.LENGTH_LONG).show();
+    }
+
+    private void showOrAnimateMarker(Location location)
+    {
+        if (currentPositionMarker == null)
+            currentPositionMarker = googleMap
+                    .addMarker(googleMapHelper.getDriverMarkerOptions(new LatLng(location.getLatitude(), location.getLongitude())));
+        else
+            MarkerAnimationHelper.animateMarkerToGB(
+                    currentPositionMarker,
+                    new LatLng(location.getLatitude(),
+                            location.getLongitude()),
+                    new LatLngInterpolator.Spherical());
+    }
+
+    private void animateCamera(Location location)
+    {
+        CameraUpdate cameraUpdate = googleMapHelper.buildCameraUpdate(new LatLng(location.getLatitude(), location.getLongitude()));
+        googleMap.animateCamera(cameraUpdate);
+    }
+
+    public static void setDriverOnlineFlag(boolean bool){
+        driverOnlineFlag = bool;
     }
 }
 

@@ -22,6 +22,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.example.testdriverapp.helpers.FireBaseHelper;
 import com.example.testdriverapp.helpers.UiHelper;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -39,6 +40,7 @@ public class BackgroundService extends Service {
     private FusedLocationProviderClient locationProviderClient;
     private LocationRequest locationRequest;
     private UiHelper uiHelper;
+    private FireBaseHelper fireBaseHelper = new FireBaseHelper(MainActivity.DRIVER_ID);
 
     private LocationCallback locationCallback = new LocationCallback() {
         @Override
@@ -50,9 +52,12 @@ public class BackgroundService extends Service {
                 return;
 
             Intent i = new Intent("location_update");
+
             i.putExtra("longitude", location.getLongitude());
             i.putExtra("latitude", location.getLatitude());
+
             sendBroadcast(i);
+
             Log.i("Location Changed", "Service");
             }
         };
@@ -66,37 +71,6 @@ public class BackgroundService extends Service {
     @SuppressLint("MissingPermission")
     @Override
     public void onCreate() {
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                Intent i = new Intent("location_update");
-                i.putExtra("longitude", location.getLongitude());
-                i.putExtra("latitude", location.getLatitude());
-                sendBroadcast(i);
-                Log.i("Location Changed", "Service");
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                Intent i = new Intent(Settings.ACTION_LOCALE_SETTINGS);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-            }
-        };
-
-        locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, locationListener);
 
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -140,5 +114,8 @@ public class BackgroundService extends Service {
         if (locationManager != null){
             locationManager.removeUpdates(locationListener);
         }
+        MainActivity.setDriverOnlineFlag(false);
+        fireBaseHelper.deleteDriver();
+        stopSelf();
     }
 }

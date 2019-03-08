@@ -13,12 +13,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="06888bc0-a60b-48ab-8dab-27ad90b1ac97" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/BackgroundService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/helpers/LocationRequestHelper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/helpers/LocationResultHelper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/helpers/LocationUpdatesBroadcastReceiver.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/helpers/LocationUpdatesIntentService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/values/dimens.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10.1/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10.1/javaCompile/classAnalysis.bin" afterDir="false" />
@@ -26,16 +20,9 @@
       <change beforePath="$PROJECT_DIR$/.gradle/4.10.1/taskHistory/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10.1/taskHistory/taskHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/4.10.1/taskHistory/taskHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.10.1/taskHistory/taskHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/gradle_models.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/LocationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/LocationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/BackgroundService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/BackgroundService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/helpers/UiHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/helpers/UiHelper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <list id="9bad8f8d-b1b9-4c8b-94bd-d8810cca7eca" name="Revert: Added not fully functional foreground service. Going to fix it." comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -86,7 +73,7 @@
     <session id="-1596440364">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="10" />
+          <entry key="project.closed" value="11" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="4" />
           <entry key="project.open.time.12" value="2" />
@@ -99,7 +86,7 @@
         <counts>
           <entry key="gradle" value="11" />
           <entry key="iml" value="1" />
-          <entry key="java" value="102" />
+          <entry key="java" value="106" />
           <entry key="json" value="2" />
           <entry key="png" value="4" />
           <entry key="pro" value="1" />
@@ -111,7 +98,7 @@
           <entry key="Groovy" value="11" />
           <entry key="IDEA_MODULE" value="1" />
           <entry key="Image" value="4" />
-          <entry key="JAVA" value="102" />
+          <entry key="JAVA" value="106" />
           <entry key="JSON" value="2" />
           <entry key="ProGuard File" value="1" />
           <entry key="XML" value="42" />
@@ -120,16 +107,16 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="gradle" value="56" />
-          <entry key="java" value="17534" />
-          <entry key="txt" value="323" />
+          <entry key="java" value="18435" />
+          <entry key="txt" value="445" />
           <entry key="xml" value="714" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Groovy" value="56" />
-          <entry key="JAVA" value="17534" />
-          <entry key="PLAIN_TEXT" value="323" />
+          <entry key="JAVA" value="18435" />
+          <entry key="PLAIN_TEXT" value="445" />
           <entry key="XML" value="714" />
         </counts>
       </usages-collector>
@@ -140,25 +127,28 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/MainActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="467">
-              <caret line="469" column="108" selection-start-line="469" selection-start-column="8" selection-end-line="469" selection-end-column="108" />
+            <state relative-caret-position="137">
+              <caret line="110" column="17" selection-start-line="110" selection-start-column="17" selection-end-line="110" selection-end-column="17" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#4992#5727#0" expanded="true" />
-                <element signature="e#5726#5727#0" expanded="true" />
+                <element signature="e#3487#4230#0" expanded="true" />
+                <element signature="e#4229#4230#0" expanded="true" />
+                <element signature="e#8697#8721#0" expanded="true" />
+                <element signature="e#10856#10857#0" expanded="true" />
+                <element signature="e#10895#10896#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/BackgroundService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="578">
-              <caret line="95" lean-forward="true" selection-start-line="68" selection-start-column="8" selection-end-line="95" />
+            <state relative-caret-position="501">
+              <caret line="116" column="46" selection-start-line="116" selection-start-column="46" selection-end-line="116" selection-end-column="46" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1634#1943#0" expanded="true" />
@@ -166,6 +156,15 @@
                 <element signature="e#2220#2221#0" expanded="true" />
                 <element signature="e#2247#2248#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/LocationService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="208">
+              <caret line="137" column="21" selection-start-line="137" selection-start-column="16" selection-end-line="137" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -184,18 +183,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>fireBase</find>
-      <find>switch</find>
-      <find>Driver Ver</find>
-      <find>switchCompat</find>
-      <find>DRIVER_ID</find>
-      <find>request_updates_button</find>
-      <find>findViewById</find>
-      <find>mRequestUpdatesButton</find>
-      <find>getLocationResultText</find>
-      <find>onHandleIntent</find>
-      <find>SharedPreferences</find>
-      <find>mLocationUpdatesResultView</find>
       <find>showSnackbar</find>
       <find>mFusedLocationClient</find>
       <find>getLastLocation</find>
@@ -209,11 +196,23 @@
       <find>locationService</find>
       <find>getDriverId</find>
       <find>BackgroundService</find>
-      <find>fireBaseHelper</find>
       <find>location_update</find>
       <find>requestLocationUpdates</find>
       <find>locationProviderClient</find>
       <find>locationRequest</find>
+      <find>switchFabs</find>
+      <find>VERIFICATION_REQUEST_CODE</find>
+      <find>onActivityResult</find>
+      <find>mapFragment</find>
+      <find>preferences</find>
+      <find>startActivityForResult(ScanQrCodeActivity.getScanQrCodeActivity(getApplicationContext()), VERIFICATION_REQUEST_CODE);</find>
+      <find>enableButton</find>
+      <find>fire`</find>
+      <find>showOrAnimateMarker</find>
+      <find>fireBaseHelper</find>
+      <find>setDriverId</find>
+      <find>onDes</find>
+      <find>driverOnlineFlag</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\Mahmoud\Desktop\TestDriverApp\app</dir>
@@ -250,8 +249,8 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/helpers/UiHelper.java" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/LocationService.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/BackgroundService.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/MainActivity.java" />
       </list>
     </option>
   </component>
@@ -416,7 +415,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
-    <property name="device.picker.selection" value="PL2GARH852113828" />
+    <property name="device.picker.selection" value="DKJ9X18611G06578" />
     <property name="settings.editor.selected.configurable" value="android.sdk-updates" />
   </component>
   <component name="RecentsManager">
@@ -594,12 +593,18 @@
       <option name="project" value="LOCAL" />
       <updated>1552016564982</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Foreground location service works when the phone is locked.">
+      <created>1552082077428</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1552082077428</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.55886525" visible="true" weight="0.20067114" />
       <window_info id="Structure" order="1" sideWeight="0.50528544" side_tool="true" weight="0.20067114" />
@@ -647,7 +652,8 @@
     <MESSAGE value="Added not fully functional foreground service. Going to fix it." />
     <MESSAGE value="Finished basic app functions. Gonna work on UI." />
     <MESSAGE value="Finished basic features. Edited UI. Arabized app." />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished basic features. Edited UI. Arabized app." />
+    <MESSAGE value="Foreground location service works when the phone is locked." />
+    <option name="LAST_COMMIT_MESSAGE" value="Foreground location service works when the phone is locked." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -669,24 +675,6 @@
           <line>76</line>
           <properties />
           <option name="timeStamp" value="18" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/helpers/FireBaseHelper.java</url>
-          <line>28</line>
-          <properties />
-          <option name="timeStamp" value="35" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/MainActivity.java</url>
-          <line>83</line>
-          <properties />
-          <option name="timeStamp" value="36" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/MainActivity.java</url>
-          <line>101</line>
-          <properties />
-          <option name="timeStamp" value="37" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -834,13 +822,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="148">
           <caret line="668" selection-start-line="668" selection-end-line="668" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-28/android/app/Activity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="7330" selection-start-line="7330" selection-end-line="7330" />
         </state>
       </provider>
     </entry>
@@ -1004,42 +985,52 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/LocationService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="46" column="51" selection-start-line="46" selection-start-column="51" selection-end-line="48" selection-end-column="66" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/helpers/FireBaseHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="191">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
+        <state relative-caret-position="218">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/MainActivity.java">
+    <entry file="file://$USER_HOME$/AppData/Local/Android/Sdk/sources/android-28/android/app/Activity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="467">
-          <caret line="469" column="108" selection-start-line="469" selection-start-column="8" selection-end-line="469" selection-end-column="108" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#4992#5727#0" expanded="true" />
-            <element signature="e#5726#5727#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="165">
+          <caret line="7137" selection-start-line="7137" selection-end-line="7137" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/LocationService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="137" column="21" selection-start-line="137" selection-start-column="16" selection-end-line="137" selection-end-column="21" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/BackgroundService.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="95" lean-forward="true" selection-start-line="68" selection-start-column="8" selection-end-line="95" />
+        <state relative-caret-position="501">
+          <caret line="116" column="46" selection-start-line="116" selection-start-column="46" selection-end-line="116" selection-end-column="46" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1634#1943#0" expanded="true" />
             <element signature="e#1942#1943#0" expanded="true" />
             <element signature="e#2220#2221#0" expanded="true" />
             <element signature="e#2247#2248#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/example/testdriverapp/MainActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="137">
+          <caret line="110" column="17" selection-start-line="110" selection-start-column="17" selection-end-line="110" selection-end-column="17" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3487#4230#0" expanded="true" />
+            <element signature="e#4229#4230#0" expanded="true" />
+            <element signature="e#8697#8721#0" expanded="true" />
+            <element signature="e#10856#10857#0" expanded="true" />
+            <element signature="e#10895#10896#0" expanded="true" />
           </folding>
         </state>
       </provider>
