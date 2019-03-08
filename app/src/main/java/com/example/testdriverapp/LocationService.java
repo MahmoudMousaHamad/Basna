@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -39,15 +40,18 @@ import java.util.UUID;
 public class LocationService extends Service {
 
     public static final String CHANNEL_ID = "location_notification_channel_id";
-    private FusedLocationProviderClient locationProviderClient;
-    private UiHelper uiHelper;
-    private LocationRequest locationRequest;
-    private FireBaseHelper fireBaseHelper;
-    private boolean driverOnlineFlag = false;
+    public static FusedLocationProviderClient locationProviderClient;
+    public static UiHelper uiHelper;
+    public static LocationRequest locationRequest;
+    public static FireBaseHelper fireBaseHelper;
+    public static boolean driverOnlineFlag = false;
     public static final int LOCATION_PENDING_INTENT_REQUEST_CODE = 1209;
     public static final int STICKY_LOCATION_NOTIFICATION_ID = 345;
 
-    private LocationCallback locationCallback = new LocationCallback() {
+    private final LocationServiceBinder binder = new LocationServiceBinder();
+
+
+    public static LocationCallback locationCallback = new LocationCallback() {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             super.onLocationResult(locationResult);
@@ -57,18 +61,25 @@ public class LocationService extends Service {
             if (location == null) return;
 
             if (driverOnlineFlag){
-                fireBaseHelper.updateDriver(new
-                        Driver(location.getLatitude()
-                        , location.getLongitude()
-                        , MainActivity.DRIVER_ID));
-                Log.e("Updated Driver: ", "LocationService");
+                //FIXME
+//                fireBaseHelper.updateDriver(new
+//                        Driver(location.getLatitude()
+//                        , location.getLongitude()
+//                        , MainActivity.DRIVER_ID));
+//                Log.e("Updated Driver: ", "LocationService");
             }
         }
     };
 
+
     @Override
     public void onCreate() {
         super.onCreate();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId){
+        super.onStartCommand(intent, flags, startId);
 
         locationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -78,8 +89,8 @@ public class LocationService extends Service {
 
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
-
-        fireBaseHelper = new FireBaseHelper(MainActivity.DRIVER_ID);
+        //FIXME
+        //fireBaseHelper = new FireBaseHelper(MainActivity.DRIVER_ID);
 
         if (!uiHelper.isPlayServicesAvailable(this))
         {
@@ -96,7 +107,7 @@ public class LocationService extends Service {
             NotificationChannel serviceChannel = new NotificationChannel(
                     CHANNEL_ID,
                     "Location Service Channel",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_HIGH
             );
 
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -118,33 +129,36 @@ public class LocationService extends Service {
 
         startForeground(STICKY_LOCATION_NOTIFICATION_ID, stickyNotification);
 
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
-        super.onStartCommand(intent, flags, startId);
         requestLocationUpdates();
+
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        MainActivity.setDriverOnlineFlag(false);
+        //FIXME
+        //MainActivity.setDriverOnlineFlag(false);
         fireBaseHelper.deleteDriver();
         stopSelf();
     }
 
     @Override
     public IBinder onBind(Intent intent){
-        return null;
+        return binder;
     }
 
 
     @SuppressLint("MissingPermission")
-    private void requestLocationUpdates()
+    public void requestLocationUpdates()
     {
         locationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+    }
+
+    public class LocationServiceBinder extends Binder {
+        public LocationService getService() {
+            return LocationService.this;
+        }
     }
 
 }

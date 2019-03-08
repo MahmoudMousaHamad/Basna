@@ -23,6 +23,8 @@ public class UiHelper {
 
     private final Context context;
 
+    public static final int UPDATE_INTERVAL = 500;
+
     public UiHelper(Context context) {
         this.context = context;
     }
@@ -43,7 +45,7 @@ public class UiHelper {
     {
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(3000);
+        locationRequest.setInterval(UPDATE_INTERVAL);
         return locationRequest;
     }
 

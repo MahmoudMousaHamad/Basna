@@ -1,11 +1,25 @@
 package com.example.testdriverapp;
 
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityManagerCompat;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.Manifest;
@@ -19,6 +33,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,10 +42,15 @@ import android.widget.Toast;
 import com.example.testdriverapp.Model.Driver;
 import com.example.testdriverapp.helpers.FireBaseHelper;
 import com.example.testdriverapp.helpers.GoogleMapHelper;
+import com.example.testdriverapp.helpers.LocationRequestHelper;
+import com.example.testdriverapp.helpers.LocationResultHelper;
+import com.example.testdriverapp.helpers.LocationUpdatesBroadcastReceiver;
 import com.example.testdriverapp.helpers.MarkerAnimationHelper;
 import com.example.testdriverapp.helpers.UiHelper;
 import com.example.testdriverapp.inrerfaces.IPositiveNegativeListener;
 import com.example.testdriverapp.inrerfaces.LatLngInterpolator;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.*;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,8 +58,133 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 
+public class MainActivity extends AppCompatActivity {
+
+    private FloatingActionButton fabStart;
+    private FloatingActionButton fabStop;
+    private BroadcastReceiver broadcastReceiver;
+    private FireBaseHelper fireBaseHelper;
+    public static final String DRIVER_ID = "00000";
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(broadcastReceiver == null){
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Driver tempDriver = new Driver(Double.parseDouble(intent.getExtras().get("latitude").toString())
+                            , Double.parseDouble(intent.getExtras().get("longitude").toString()), DRIVER_ID);
+
+                    fireBaseHelper.updateDriver(tempDriver);
+                    Log.e("Updated Driver: ", "MainActivity");
+
+                    Toast.makeText(context, intent.getExtras().get("longitude").toString()
+                            + " "
+                            + intent.getExtras().get("longitude").toString()
+                            , Toast.LENGTH_LONG).show();
+                }
+            };
+        }
+
+        registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (broadcastReceiver != null){
+            unregisterReceiver(broadcastReceiver);
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        fireBaseHelper = new FireBaseHelper(DRIVER_ID);
+
+        fabStart = findViewById(R.id.fab_start);
+        fabStop = findViewById(R.id.fab_stop);
+
+        if(!checkRuntimePermissions()){
+            enableButton();
+        }
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Driver tempDriver = new Driver(Double.parseDouble(intent.getExtras().get("latitude").toString())
+                        , Double.parseDouble(intent.getExtras().get("longitude").toString()), DRIVER_ID);
+
+                fireBaseHelper.updateDriver(tempDriver);
+                Log.e("Updated Driver: ", "MainActivity");
+
+                Toast.makeText(context, intent.getExtras().get("longitude").toString()
+                                + " "
+                                + intent.getExtras().get("longitude").toString()
+                        , Toast.LENGTH_LONG).show();
+            }
+        };
+
+    }
+
+    private void enableButton() {
+        fabStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), BackgroundService.class);
+                startService(i);
+                fabStop.setVisibility(View.VISIBLE);
+                fabStart.setVisibility(View.GONE);
+            }
+        });
+
+        fabStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), BackgroundService.class);
+                stopService(i);
+                fabStart.setVisibility(View.VISIBLE);
+                fabStop.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private boolean checkRuntimePermissions() {
+        if (Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+        != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}
+            ,100);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 100){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                enableButton();
+            } else{
+                checkRuntimePermissions();
+            }
+        }
+    }
+}
+
+
+/*
 public class MainActivity extends AppCompatActivity {
 
     public MainActivity() {
@@ -84,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FloatingActionButton fabStop;
 
+    private LocationService locationService;
 
 
     private LocationCallback locationCallback = new LocationCallback() {
@@ -182,7 +328,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
 
         fabStart = findViewById(R.id.fab_start);
 
@@ -395,6 +540,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            locationService = ((LocationService.LocationServiceBinder) service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            locationService = null;
+        }
+    };
+
     public static String getDriverId() {
         return DRIVER_ID;
     }
@@ -412,3 +569,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+*/
