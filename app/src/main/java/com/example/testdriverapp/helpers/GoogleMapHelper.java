@@ -26,7 +26,7 @@ public class GoogleMapHelper {
 
     public MarkerOptions getDriverMarkerOptions(LatLng position)
     {
-        MarkerOptions options = getMarkerOptions(R.drawable.driver_icon, position);
+        MarkerOptions options = getMarkerOptions(R.drawable.front_bus, position);
         options.flat(true);
         return options;
     }

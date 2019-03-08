@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.Manifest;
@@ -16,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -76,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
     SwitchCompat switchCompat;
 
     private static boolean isDriver;
+
+    private FloatingActionButton fabStart;
+
+    private FloatingActionButton fabStop;
 
 
 
@@ -175,6 +182,56 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+
+        fabStart = findViewById(R.id.fab_start);
+
+        fabStop = findViewById(R.id.fab_stop);
+
+        fabStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                driverOnlineFlag = true;
+
+                isDriver = preferences.getBoolean("is_driver", false);
+                // check if the user is a driver
+                if (isDriver)
+                {
+                    // if user is verified as driver, make them online
+                    driverOnlineFlag = true;
+
+                    // set UI status to online
+                    driverStatusTextView.setText("Online");
+
+                    // set start button visibility to gone
+                    fabStart.setVisibility(View.GONE);
+
+                    // set stop button visibility to visible
+                    fabStop.setVisibility(View.VISIBLE);
+                }
+                // if we don't know if the user is a driver, then start QR scan activity to check
+                else {
+                    switchFabs(false);
+                    startActivityForResult(ScanQrCodeActivity.getScanQrCodeActivity(getApplicationContext()), VERIFICATION_REQUEST_CODE);
+                }
+            }
+        });
+
+        fabStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                driverStatusTextView.setText("Offline");
+                driverOnlineFlag = false;
+                fireBaseHelper.deleteDriver();
+
+                // set start button visibility to gone
+                fabStart.setVisibility(View.VISIBLE);
+
+                // set stop button visibility to visible
+                fabStop.setVisibility(View.GONE);
+            }
+        });
+
     }
 
     @Override
@@ -207,6 +264,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        switchFabs(false);
+
         Intent serviceIntent = new Intent(this, LocationService.class);
         stopService(serviceIntent);
     }
@@ -225,13 +284,15 @@ public class MainActivity extends AppCompatActivity {
 
         if (isDriverResult)
         {
-            Toast.makeText(this, "Driver Verified", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.driver_verified, Toast.LENGTH_LONG).show();
 
             // if user is verified as driver, make them online
             driverOnlineFlag = true;
 
             // set UI status to online
             driverStatusTextView.setText("Online");
+
+            switchFabs(true);
 
             switchCompat.setChecked(true);
         }
@@ -315,6 +376,22 @@ public class MainActivity extends AppCompatActivity {
             DRIVER_ID = preferences.getString("driver_id", "0000");
             prefEditor.putBoolean("has_driver_id", true);
             prefEditor.commit();
+        }
+    }
+
+    private void switchFabs(boolean isChecked){
+        if(isChecked){
+            // set start button visibility to gone
+            fabStart.setVisibility(View.GONE);
+
+            // set stop button visibility to visible
+            fabStop.setVisibility(View.VISIBLE);
+        } else{
+            // set start button visibility to gone
+            fabStart.setVisibility(View.VISIBLE);
+
+            // set stop button visibility to visible
+            fabStop.setVisibility(View.GONE);
         }
     }
 

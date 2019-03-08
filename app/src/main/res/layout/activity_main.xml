@@ -6,11 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".MainActivity"
+        tools:layout_editor_absoluteX="142dp"
+        tools:layout_editor_absoluteY="231dp">
 
         <FrameLayout
             android:id="@+id/driverStatusLayout"
@@ -36,17 +37,48 @@
                 android:layout_gravity="end"
                 android:layout_marginRight="15dp"
                 android:checked="false" />
+
         </FrameLayout>
 
-        <fragment
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/supportMap"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/driverStatusLayout"
-            tools:context="spartons.com.frisbeeGo.fragments.MapFragment" />
+            android:layout_height="match_parent">
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/supportMap"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/driverStatusLayout"
+                tools:context="spartons.com.frisbeeGo.fragments.MapFragment" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_start"
+                android:layout_width="80dp"
+                android:layout_height="75dp"
+                android:layout_gravity="bottom|right"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="50dp"
+                android:background="@color/colorPrimary"
+                android:src="@drawable/start_button"
+                app:backgroundTint="@color/colorPrimary"
+                app:fabSize="normal" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_stop"
+                android:layout_width="80dp"
+                android:layout_height="75dp"
+                android:layout_gravity="bottom|right"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="50dp"
+                android:background="@color/colorAccent"
+                android:src="@drawable/stop_button"
+                android:visibility="gone"
+                app:fabSize="normal" />
+
+        </FrameLayout>
+
     </RelativeLayout>
 
 
