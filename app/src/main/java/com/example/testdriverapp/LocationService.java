@@ -130,7 +130,9 @@ public class LocationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        MainActivity.setDriverOnlineFlag(false);
         fireBaseHelper.deleteDriver();
+        stopSelf();
     }
 
     @Override

@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     // FusedLocationProviderApi
     private LocationRequest locationRequest;
     private boolean locationFlag = true;
-    private boolean driverOnlineFlag = false;
+    private static boolean driverOnlineFlag = false;
     private @Nullable Marker currentLocationMarker;
     private GoogleMapHelper googleMapHelper = new GoogleMapHelper();
 
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     SwitchCompat switchCompat;
 
-    boolean isDriver;
+    private static boolean isDriver;
 
 
 
@@ -207,10 +207,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        fireBaseHelper.deleteDriver();
-
-        driverOnlineFlag = false;
-
         Intent serviceIntent = new Intent(this, LocationService.class);
         stopService(serviceIntent);
     }
@@ -320,6 +316,22 @@ public class MainActivity extends AppCompatActivity {
             prefEditor.putBoolean("has_driver_id", true);
             prefEditor.commit();
         }
+    }
+
+    public static String getDriverId() {
+        return DRIVER_ID;
+    }
+
+    public static boolean getDriverOnlineFlag(){
+        return driverOnlineFlag;
+    }
+
+    public static void setDriverOnlineFlag(boolean bool){
+        driverOnlineFlag = bool;
+    }
+
+    public static boolean getIsDriver(){
+        return isDriver;
     }
 
 }
